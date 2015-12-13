@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>World Country Flags</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.3.5.5.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/style.css"/ type="text/css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+
+$(document).ready( function(){
+  resizeBrowser(210,30);
+  $(window).resize(function() {
+    resizeBrowser(210,30);
+    browser.updateLayout();
+  });
+
+  logIf.Check = logIf.All();
+
+  browser = new kshf.Browser({
+    domID: "#chart_div",
+    itemName: "Flags",
+    categoryTextWidth: 135,
+    source: {
+      dirPath: 'data/',
+      fileType: 'csv',
+      tables: {name:"flags", id:'Country'}
+//      gdocId: '0Ai6LdDWgaqgNdHRpMDlwUTlZc0NqNHJjc1VEeXV3MEE',
+    },
+    summaries: [
+      { name: "Continent",
+        catLabel: function(){
+          switch(this.id){
+            case 1: return "North America";
+            case 2: return "South America";
+            case 3: return "Europe";
+            case 4: return "Africa";
+            case 5: return "Asia";
+            case 6: return "Oceania";
+            default: return "-";
+          }
+        } },
+      { name: "Number of Bars", value: "Bars", panel: 'right' },
+      { name: "Number of Stripes", panel: 'right', unitName: "strp",
+        value: function(){ if(this.Stripes!==0) return this.Stripes; } }
+      }
+    ],
+    itemDisplay: {
+      sortingOpts: 'Country',
+      displayType: 'grid',
+      maxVisibleItems_Default: 200,
+      textSearch: "Country",
+      recordView: function(){
+        return "<img><span class='title'>"+this.Country+"</span>";
+      },
+      visibleCb: function(d){
+        d3.select(d.DOM.record).select("img").attr("src",
+            "http://www.cs.umd.edu/~yalcin/keshif_res/"+this.Flag);
+      }
+    }
+  });
+});
+        </script>
+    <style>
+.kshfRecord{
+  width: 120px;
+  padding: 3px;
+}
+.iteminfo a{
+  color:#606060;
+  font-style:italic;
+}
+.content img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 3px;
+  border: solid;
+  border-color: #dddddd #aaaaaa #aaaaaa #dddddd;
+  border-width: 1px 2px 2px 1px;
+  border-radius: 10px;
+  background-color: white;
+  max-width: 100%;
+  transition: background-color 300ms linear;
+  -webkit-transition: background-color 300ms linear;
+  -o-transition: background-color 300ms linear;
+  -moz-transition: background-color 300ms linear;
+}
+.kshfRecord[highlight=true] .content img{
+  background-color: orangered;
+}
+.content span.title{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2px;
+  text-align: center;
+  font-size: 0.8em;
+}
+    </style>
+	</head>
+  <body>
+    <div class="contents"><div id="chart_div"></div></div>
+  </body>
+</html>

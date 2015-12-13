@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Reuters 1987 News Dataset</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="../js/d3.3.5.5.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+        <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+        <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="./css/style.css"/ type="text/css">
+
+        <script type="text/javascript">
+
+function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+google.setOnLoadCallback( function() {
+  // set div height accordingly 
+  $('#chart_div').height($(window).height()-45);
+  $('#chart_div').width ($(window).width()*0.9);
+  // set resize callback
+  $(window).resize(function() {
+    $('#chart_div').height($(window).height()-45);
+    $('#chart_div').width ($(window).width()*0.9);
+    browser.updateLayout();
+  });
+
+  var newsCol,peopleCol,topicsCol;
+
+  browser = new kshf.Browser({
+    domID: "#chart_div",
+    itemName: "News stories",
+    categoryTextWidth:150,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdE5hLTNCdWNHVUpFVmxuU0hXNGVzTVE',
+      tables: ["News" ,"People", {name:"Topics", id:"Code"}]
+    },
+    loadedCb: function(){
+      newsCol = kshf.dt_ColNames.News;
+      peopleCol = kshf.dt_ColNames.People;
+      topicsCol = kshf.dt_ColNames.Topics;
+      kshf.Util.cellToArray(kshf.dt.News, [newsCol.People, newsCol.Country, newsCol.Topic], /\b,/, false);
+    },
+    summaries: [
+      {   name: "Category",
+          value: function(){
+              var topics = this[newsCol.Topic];
+              var cats= {};
+              for(var i=0; i<topics.length; i++){
+                  var t=topics[i];
+                  var tDt=kshf.dt_id.Topics[t];
+                  if(tDt) cats[tDt.data[1]] = true;
+              }
+              var toRet=[]
+              for(c in cats){
+                  toRet.push(c);
+              }
+              return toRet;
+          }
+      },{ name: "Topic",
+      },{ name: "Country", catLabel: function(){ return capitaliseFirstLetter(this.id); }
+      },{ name: "People",
+          catLabel: function(){ return kshf.dt_id.People[this.id].data[peopleCol.Name]; },
+          catTooltip: function(){ 
+              var p = kshf.dt_id.People[this.id];
+              return p.data[peopleCol.Name]+", "+p.data[peopleCol.Role]+", "+p.data[peopleCol.Location];
+          }
+      },{ name: "Publish Time", panel: 'middle'
+      }
+    ],
+    itemDisplay: {
+      sortColWidth: 70,
+      sortingOpts: {
+          title: 'Publish Time',
+          label: function(){ 
+              var date=this[newsCol['Publish Time']];
+              return (date.getUTCMonth()+1)+"-"+date.getUTCDate()+"-"+date.getUTCFullYear(); 
+          }
+      },
+      textSearch: 'title',
+      recordView: function(){
+        var j;
+        var str=this[newsCol.title].replace("<","&lt;").replace(">","&gt;");
+        var cats = this[newsCol.Topic];
+        if(cats.length>0){
+            str+="<div class=\"iteminfo iteminfo_1\"> Topics: " + cats + "</div>";
+        }
+        var ctrs = this[newsCol.Country];
+        if(ctrs.length>0){
+            str+="<div class=\"iteminfo iteminfo_1\"> Countries: ";
+            for(j=0; j<ctrs.length; j++){
+                str+=capitaliseFirstLetter(ctrs[j]);
+                if(j!==ctrs.length-1) { str+=', '; }
+            }
+            str+="</div>";
+        }
+        return str;
+      }
+    }
+  });
+});
+        </script>
+	</head>
+    <body>
+        <div class="contents"><div id="chart_div"></div></div>
+    </body>
+</html>

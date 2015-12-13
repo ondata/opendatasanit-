@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Exploring Buffy The Vampire Slayer - Season 1</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.3.5.5.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./data/buffy.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/style.css"/ type="text/css">
+
+    <meta property="og:image" content="http://keshif.me/demo/demo_img/buffy.png" />
+    <meta property="og:url" content="http://keshif.me/demo/buffy.html" />
+    <meta property="og:title" content="Exploring Buffy The Vampire Slayer - Season 1" />
+
+    <script type="text/javascript">
+function dataLoad(browser){
+    // SETUP EPISODE INFORMATION
+    kshf.dt.Episodes = [];
+    kshf.dt_id.Episodes = {};
+    g_episodes.forEach(function(ep){
+        var c=new kshf.Item(ep,"ep_id");
+        kshf.dt.Episodes.push(c);
+        kshf.dt_id.Episodes[c.id()] = c;
+    });
+
+    // SETUP CHARACTER INFORMATION
+    kshf.dt.Characters = [];
+    kshf.dt_id.Characters = {};
+    g_characters.forEach(function(character){
+        var c=new kshf.Item(character,"char_id");
+        kshf.dt.Characters.push(c);
+        kshf.dt_id.Characters[c.id()] = c;
+    });
+
+    // SETUP PER-SECOND CHARACTER APPEARANCE
+    kshf.dt.Seconds = [];
+    var index = [];
+    for(var x=0; x<=12;x++){
+        index[x] = {};
+    }
+    var secondID=0;
+    // for each episode
+    g_appearances.forEach(function(episode,epNo){
+        // for each character
+        episode.forEach(function(ep_char){
+            var char_id = ep_char.char_id;
+            // for each appearance
+            ep_char.times.forEach(function(t){
+                // for each second
+                for(var second=t.ts; second<=t.te ; second++){
+                    var who = index[epNo][second];
+                    if(who===undefined){
+                        var i= new kshf.Item({
+                                'Episode': epNo+1,
+                                'Appears':[],
+                                'second':second,
+                                'Location':'?',
+                                'id':secondID
+                            },'id');
+                        kshf.dt.Seconds.push(i);
+                        index[epNo][second] = i;
+                        who = i;
+                    }
+                    who.data.Appears.push(char_id);
+                }
+            });
+        });
+    });
+
+    // add locations per episode
+    // for each episode
+    g_locations.forEach(function(episode,epNo){
+        // for each character
+        episode.forEach(function(t){
+            // for each second
+            for(var second=t.ts; second<=t.te ; second++){
+                var who = index[epNo][second];
+                if(who===undefined){
+                    var i= new kshf.Item({
+                            'Episode': epNo+1,
+                            'Appears':[],
+                            'second':second,
+                            'Location':'?',
+                            'id':secondID
+                        },'id');
+                    kshf.dt.Seconds.push(i);
+                    index[epNo][second] = i;
+                    who = i;
+                }
+                who.data.Location = t.loc;
+            }
+        });
+    });
+
+    browser.primaryTableName = "Seconds";
+    browser.loadCharts();
+};
+
+$(document).ready(function(){
+    function resizeBrowser(){
+        $('#chart_div').height($(window).height()-130);
+    };
+    resizeBrowser();
+    $(window).resize(function() {
+        resizeBrowser();
+        browser.updateLayout();
+    });
+
+    browser = new kshf.Browser({
+        domID: "#chart_div",
+        barChartWidth: 90,
+        leftPanelLabelWidth: 290,
+        middlePanelLabelWidth: 290,
+        source: {
+            url: "http://visualizingbuffy.com/season1.html",
+            // http://visualizingbuffy.com/data/season1_data.js
+            callback: dataLoad
+        },
+        summaries: [
+            {   name: "Episode", panel: 'middle',
+                catSortBy: "ep_id",
+                catTableName: "Episodes", catTooltip: "Synopsis",
+                catLabel: function(){ return this.Name+" <i>[Ep."+this.ep_id+"]</i>"; },
+                facets:[
+                    {   name: "Dead Count (Total)", collapsed: true,
+                        value: function(){ return this.bodycount.total; }
+                    },{ name: "Dead Count (Humans)", collapsed: true,
+                        value: function(){ return this.bodycount.humans; }
+                    },{ name: "Dead Count (Vampires)", collapsed: true,
+                        value: function(){ return this.bodycount.vampires; }
+                    },{ name: "Dead Count (Demons)", collapsed: true,
+                        value: function(){ return this.bodycount.demons; }, 
+                    },{ name: "Dead Count (Animals)", collapsed: true,
+                        value: function(){ return this.bodycount.animals; },
+                    }
+                ]
+            },{ name: "Location", panel: 'middle'
+            },{ name: "Characters",
+                value: "Appears",
+                catTableName: "Characters",
+                catLabel: function(){ 
+                    return this.Name+"<img src='./img/buffy/"+this.char_id+".jpg' class='charImg'>";
+                },
+                facets: [
+                    {   name: "Episodic Appearance", collapsed: true,
+                        catSortBy: "id",
+                        value: function(){
+                            if(this.episode===undefined) return 0; // --> Many 
+                            return this.episode;
+                        },
+                        catLabel: function(){
+                            if(this.id===0) return "Many Episodes";
+                            return "Episode "+this.id+" Only";
+                        }
+                    },{ name: "Team",
+                    },{ name: "Type", collapsed: true
+                    }
+                ]
+            },{ name: "Time (Minutes into the episode)", unitName: "min", panel: "bottom",
+                value: function(){ return this.second/60; },
+            }
+        ]
+    });
+});
+        </script>
+        <style>
+            #chart_div {
+                width: 890px;
+                height: 690px;
+            }
+            img.charImg{
+                height: 21px;
+                width: 19px;
+                margin-right: 3px;
+                margin-left: 3px;
+                border-radius: 4px;
+                vertical-align: middle;
+                position: relative;
+                transform-origin: 0% 50%;
+                -webkit-transform-origin: 0% 50%;
+                -o-transform-origin: 0% 50%;
+                =moz-transform-origin: 0% 50%;
+                transition: all 150ms ease-in;
+                -webkit-transition: all 150ms ease-in;
+                -o-transition: all 150ms ease-in;
+                -moz-transition: all 150ms ease-in;
+            }
+            .attrib[highlight="selected"]{
+                z-index: 800;
+            }
+            .attrib[highlight="selected"] .attribLabel {
+                z-index: 900;
+            }
+            .attrib[highlight="selected"] img.charImg{
+              transform: scale(2.5);
+              z-index: 1000;
+            }
+            .kshf .kshfChart[chart_id="2"] > .wrapper > .facetCategorical > .attribGroup > .attrib > .attribLabel{
+                overflow: visible !important;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="pageTitle" align="center">Exploring <b>Buffy The Vampire Slayer</b> - Who? When? Where? </div>
+    <div class="pageSubtitle">Explore every second of the <b>12 Episodes</b> of <b>Season 1!</b>
+        Characters, Episode, Location and Time summaries show distributions of occurances per second.</div>
+    <div class="contents"><div id="chart_div"></div></div>
+
+    <div id="infobox" align="center">
+        <span class="fa fa-info-circle"></span>
+        Data retrieved from <a href="http://visualizingbuffy.com/" target='_blank'>Visualizing Buffy</a> project.<br>
+        Data collected by <a href="https://twitter.com/esteboix" target="_blank">Esteve Boix</a>. Original visualization implemented by Esteve Boix, advised by <a
+            target="_blank" href="https://twitter.com/albertocairo">Alberto Cairo</a>
+        <span class="fa fa-info-circle"></span>
+        </div>
+    </body>
+</html>

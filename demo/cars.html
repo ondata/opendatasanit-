@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Cars</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.3.5.5.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/style.css"/ type="text/css">
+
+    <script type="text/javascript">
+google.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#chart_div",
+    barChartWidth: 100,
+    leftPanelLabelWidth: 150,
+    rightPanelLabelWidth: 150,
+    source: {
+      gdocId: '1UPaqtGuoeGXcxXKSVh1IJ-i40gbTgGfb_jZo494PlXk',
+      tables: "Cars"
+    },
+    summaries: [
+      { name: "Origin",
+        catLabel: function(){
+          switch(this.id){
+            case 1: return "American";
+            case 2: return "European";
+            case 3: return "Japanese";
+          }
+        } },
+      { name: "Cyclinders", catSortBy: "id" },
+      { name: "MPG" },
+      { name: "Engine Displacement", unitName: "cu.\"", panel: 'right' },
+      { name: "Horsepower", panel: 'right' },
+      { name: "Weight", unitName: "lbs", panel: 'right' },
+      { name: "Acceleration", description: "0 to 60 mph", unitName: "sec" },
+      { name: "Year", panel: "bottom", value: function(){ return new Date(this.Year,1,1);} },
+      { name: "RecordView", panel: "none", 
+        // Adding the last ID part to make it unique per car
+        value: function(){ return this.Name+" ("+this.Year+")"+"<span style='display:none'>"+this.id+"</span>"; } }
+    ],
+    itemDisplay: {
+      sortingOpts: ["MPG", "Weight", "Year"],
+      sortColWidth: 60,
+      textSearch: "Name",
+      recordView: "RecordView"
+    }
+  });
+});
+    </script>
+    <style>
+#chart_div {
+  width: 950px;
+  height: 670px;
+}
+    </style>
+  </head>
+  <body>
+    <div class="contents"><div id="chart_div"></div></div>
+    <div id="infobox" align="center">
+      <span class="fa fa-info-circle"></span>
+      <a href="http://lib.stat.cmu.edu/datasets/cars.data" target='_blank'>Data</a> from <a href="http://lib.stat.cmu.edu/datasets/" target='_blank'>StatLib @ CMU</a>
+      <span class="fa fa-info-circle"></span>
+      </div>
+
+    <script id="dsq-count-scr" src="//keshif.disqus.com/count.js" async></script>
+
+    <div id="disqus_thread"></div>
+    <div id="disqus_thread"></div>
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+         */
+        /*
+        var disqus_config = function () {
+            this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() {  // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            
+            s.src = '//keshif-dev.disqus.com/embed.js';
+            
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <script>
+        /**
+        var URL = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
+        var disqus_shortname = 'keshif.disqus.com'; // Required - Replace example with your forum shortname
+        var disqus_identifier = "ww.keshif.me";
+        var disqus_url = URL;
+        var disqus_developer = 1;
+
+        (function() {  // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = '//'+disqus_shortname+'/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+*/
+    </script>
+  </body>
+</html>
