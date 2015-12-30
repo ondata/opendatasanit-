@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>5 Years of Infosthetics</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="../js/d3.3.5.5.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+        <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+        <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="./css/style.css"/ type="text/css">
+
+        <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+
+        <script type="text/javascript">
+
+var postCols;
+
+$(document).ready( function(){
+  resizeBrowser(150,50);
+  $(window).resize(function() {
+    resizeBrowser(150,50);
+    browser.updateLayout();
+  });
+
+  browser = new kshf.Browser({
+    domID: "#chart_div",
+    categoryTextWidth: 100,
+    rightPanelLabelWidth: 90,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdFhuMXh0V1E2Wk5tU19JaDltUWVMVnc',
+      tables: ["Posts", "Authors"]
+    },
+    loadedCb: function(){
+      kshf.Util.cellToArray(kshf.dt.Posts, ['Category'], ",", false);
+    },
+    summaries: [
+      { name: "Category" },
+      { name: "Author", catTableName: "Authors", catLabel: "Name", collapsed: true },
+      { name: "# Comments",  value: '# of Comments' },
+      { name: "Date", panel: 'bottom' }
+    ],
+    itemDisplay: {
+      sortingOpts: [
+        { title: 'Date', label: function(){ return moment(this.Date).format("MMM Do, YY"); }, inverse: true },
+        '# of Comments'
+      ],
+      textSearch: "Title",
+      displayType: 'grid',
+      maxVisibleItems_Default: 50,
+      recordView: function(){
+          return "<a target='_blank' href='"+this.URL+
+              "'><img><span class='subTitle' style='margin-left:3px;'>"+this.Title+"</span></a>";
+      },
+      visibleCb: function(d){
+        d3.select(d.DOM.record).select("img").attr("src",this.Img);
+      },
+    }
+  });
+});
+        </script>
+        <style>
+#chart_div{
+  width: 900px;
+  height: 600px;
+}
+.kshfRecord{
+  width: 20%;
+}
+.content{
+  padding: 3px;
+}
+div.content a{
+  vertical-align: top;
+  color: #496B86;
+}
+div.content img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 3px;
+  border: solid;
+  border-color: #dddddd #aaaaaa #aaaaaa #dddddd;
+  border-width: 1px 2px 2px 1px;
+  border-radius: 10px;
+  background-color: white;
+  width: 90%;
+  transition: background-color 300ms linear;
+  -webkit-transition: background-color 300ms linear;
+  -o-transition: background-color 300ms linear;
+  -moz-transition: background-color 300ms linear;
+}
+div.kshfRecord[highlight=true] div.content img{
+  background-color: orangered;
+}
+div.content span.title{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2px;
+  text-align: center;
+  font-size: 0.8em;
+}
+        </style>
+    </head>
+    <body>
+        <div class="contents"><div id="chart_div"></div></div>
+    </body>
+</html>

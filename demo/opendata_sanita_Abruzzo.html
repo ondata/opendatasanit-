@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>opendata abruzzo</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.3.5.5.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/style.css"/ type="text/css">
+
+    <script type="text/javascript">
+
+//google.setOnLoadCallback(function(){
+//  resizeBrowser(160,110);
+//  $(window).resize(function() {
+//    resizeBrowser(160,110);
+//    browser.updateLayout();
+//  });
+
+  browser = new kshf.Browser({
+    domID: "#chart_div",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 200,
+    rightPanelLabelWidth: 200,
+    source: {
+      gdocId: '1TUMxxd9rGO-frSVotaYuHpL66Cn5TuPB68I9dlG2RXo',
+      tables: ["Lotti", {name:"Partecipazioni", id:"id"} ]
+
+    },
+    summaries: [
+      { name: "ragioneSociale", catTableName: "Partecipazioni", catLabel: "ragioneSociale", summaries: "ragioneSociale" 
+      
+            //[
+            //{ name: "Lotti", value: "id"},
+            //{ name: "Partecipazioni", value: function(){ return             kshf.dt_id.Partecipazioni[this.ragioneSociale].data.id; } }
+            //]
+      },
+      { catTableName: "Partecipazioni", name:"nome del grafico", panel:'right', },
+      { name:"importoAggiudicazione", panel: 'right', },
+      //{ name: "Data", panel: 'bottom', value: function(){return new Date(this.dataInizio,1,1);} }
+    ],
+    itemDisplay: {
+      sortingOpts: ['dataInizio', {title: 'id', inverse:true}, 'importoAggiudicazione' ],
+      textSearch: "oggetto",
+      recordView: "oggetto"
+    }
+  });
+//});
+        </script>
+    </head>
+    <body>
+        <div class="pageTitle" align="center">opendata abruzzo</div>
+        <div class="contents"><div id="chart_div"></div></div>
+
+        <!--<div id="infobox" align="center">
+            <span class="fa fa-info-circle"></span>
+            Data from: M. Brehmer and T. Munzner. "A multi-level typology of abstract visualization tasks." <br>Visualization and Computer Graphics, IEEE Transactions on 19.12 (2013): 2376-2385.
+            <span class="fa fa-info-circle"></span>
+            </div>
+        -->
+    </body>
+    <style> #chart_div {width:950px; } </style>
+</html>
