@@ -41,8 +41,10 @@ $(document).ready( function() {
     itemDisplay: {
       sortingOpts: {name: "Data", value: "dataUltimoAggiornamentoDataset"},
       textSearch: { name: "Oggetto dell'appalto", value: function(){return this["oggetto"]//+" "+this.Track;
-      } },
-      recordView: function(){ return this["cig"]+" - "+this.oggetto; }
+      } },
+
+      recordView: function(){ return this["cig"]+" - "+this.oggetto; }
+
 
     }
   });
