@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Appalti Sanità Sicilia</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.3.5.5.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css" type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <script type="text/javascript">
+
+$(document).ready( function() {
+  resizeBrowser(160,40);
+  //$(window).resize(function() {
+  //    resizeBrowser(160,40);
+  //    browser.updateLayout();
+  //});
+
+  browser = new kshf.Browser({
+    domID: "#chart_div",
+    itemName: "Appalti - Amministrazione trasparente / Aziende sanitarie siciliane",
+    categoryTextWidth: 200,
+    source: {
+      dirPath: 'sicilia/',
+      fileType: 'csv',
+      tables: [ "lotti_accettati", "partecipazioni", ]
+    },
+    summaries: [
+      { name:"Modalità di assegnazione", value: "sceltaContraente", panel:'left' },
+      //{ name: "strutturaProponente", panel:'left' },
+      //{ name: "importoAggiudicazione", panel:'left' },
+      //{ name: "Appalti per azienda", value: function(){
+      //      var appalto = kshf.dt_id.partecipazioni[this.appaltoId}.data;
+      //      return appalti.ragioneSociale;
+      //      }, panel:'bottom'},
+//      { // summary
+//            name: "Supplier Industry",
+//            value: function(){ 
+//            var azienda = this.codiceFiscale;
+//            var codiceFiscale = kshf.dt_id.partecipazioni[azienda].data; 
+        // if you load the data as a keshif table, you can use any other indexing structure you want
+//            return codiceFiscale.ragioneSociale;
+//            }
+//        },    
+      {name:"Appalti vinti per azienda", value: function(){
+            var appalti = kshf.dt_id.partecipazioni[this.id].data;
+            return appalti.ragioneSociale;
+            },panel:'left'},
+
+    ],
+    itemDisplay: {
+      sortingOpts: {name: "Data", value: "dataUltimoAggiornamentoDataset"},
+      textSearch: { name: "Oggetto dell'appalto", value: function(){return this["oggetto"]//+" "+this.Track;
+      } },
+      maxVisibleItems_Default: 50,
+      recordView: function(){ return this["oggetto"]//+" - "+this.oggetto;
+      }
+
+
+    }
+  });
+});
+    </script>
+    <style>
+.iteminfo a{
+  color:#606060;
+  font-style:italic;
+}
+    #chart_div {
+
+        width: 800px;
+
+        height: 800px;
+
+            }
+
+    </style>
+	</head>
+    <body>
+      <div class="contents"><div id="chart_div"></div></div>
+    </body>
+</html>
